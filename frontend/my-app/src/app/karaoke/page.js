@@ -1,11 +1,16 @@
-import styles from './page.module.css';
+"use client";
 
-const Karaoke = () => {
-    return(
-        <div className={styles.centerX}>
-            Karaoke
+import LyricsDisplay from "../components/LyricsDisplay";
+import AudioPlayer from "../components/AudioPlayer";
+
+const IndexPage = () => {
+    return (
+        <div>
+        <h1>Karaoke</h1>
+        <AudioPlayer/>
+        <LyricsDisplay/>
         </div>
-    )
-}
+    );
+};
 
-export default Karaoke;
+export default IndexPage;

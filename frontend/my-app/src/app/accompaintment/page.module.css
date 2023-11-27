@@ -1,0 +1,59 @@
+.textCenter{
+    text-align: center;
+}
+
+.inputFieldContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 10dvh;
+}
+
+.box {
+    background-color: aqua;
+}
+
+.waveformContainer {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 7dvh;
+}
+
+.instruments {
+    width: 10%;
+    margin-right: 20dvh;
+    color: white;
+    font-weight: 700;
+    font-size: x-large;
+    border-radius: 500px 100px 500px 100px;
+    text-align: center;
+    padding-top: 1dvh;
+    padding-bottom: 1dvh;
+}
+
+.instrumentsContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 7dvh;
+}
+
+.melodyButtonContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 12dvh;
+}
+
+.melodyButton {
+    border-radius: 100px 100px 100px 100px;
+    padding: 2dvh 2dvh 2dvh 2dvh;
+    background-color: blueviolet;
+    color: white;
+    height: 7dvh;
+    font-weight: bold;
+    border: none;
+    box-shadow: 10px;
+}
+
+.melodyButton:hover {
+    background-color: #5e0087;
+}

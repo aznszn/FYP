@@ -12,6 +12,7 @@ const AccompaintmentPage = () => {
     const [error, setError] = useState('');
     const fileInputRef = useRef(null)
     const waveformRef = useRef(null);
+    const waveformRef2 = useRef(null);
     const wavesurferRef = useRef(null);
     const [instruments, setInstruments] = useState([])
     const [instrumentColor, setInstrumentColor] = useState({
@@ -24,6 +25,7 @@ const AccompaintmentPage = () => {
         'piano':    false,
         'bass':     false,
     })
+    const [accompaintment, setAccompaintment] = useState(null)
 
     useEffect(() => {
         console.log(instruments)
@@ -37,8 +39,8 @@ const AccompaintmentPage = () => {
             waveColor: 'violet',
             progressColor: 'purple',
             responsive: true,
-            height: 100,
-            barHeight: 17,
+            height: 50,
+            barHeight: 10,
           });
     
           // Load the selected audio file
@@ -50,6 +52,28 @@ const AccompaintmentPage = () => {
           return () => wavesurfer.destroy();
         }
       }, [file]);
+
+      useEffect(() => {
+        if (accompaintment) {
+          // Initialize WaveSurfer
+          const wavesurfer = WaveSurfer.create({
+            container: waveformRef2.current,
+            waveColor: 'violet',
+            progressColor: 'purple',
+            responsive: true,
+            height: 100,
+            barHeight: 17,
+          });
+    
+          // Load the selected audio file
+          wavesurfer.load(URL.createObjectURL(accompaintment));
+
+          wavesurferRef.current = wavesurfer;
+    
+          // Clean up on component unmount
+          return () => wavesurfer.destroy();
+        }
+      }, [accompaintment]);
   
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
@@ -105,44 +129,55 @@ const AccompaintmentPage = () => {
 
     const handleSend = () => {
         if (instruments.length > 0) {
-            const formData = new FormData()
-            formData.append('instruments', JSON.stringify(instruments))
-            formData.append('audioFile', file)
+            const formData = new FormData();
+            formData.append('instruments', JSON.stringify(instruments));
+            formData.append('audioFile', file);
+            
             axios
-            .post('http://127.0.0.1:8000/api/melodyGenerate/', formData, {
+                .post('http://127.0.0.1:8000/api/melodyGenerate/', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                }
-            })
-            .then(response => {
-                console.log('Response from server: ', response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-        }
-    }
+                },
+                responseType: 'blob', // Set the response type to 'blob' for binary data
+                })
+                .then(response => {
+                    // Handle the response, which is a blob representing the audio file
+                    const audioBlob = new Blob([response.data], { type: 'audio/wav' });
+
+                    // Create a temporary URL for the blob
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    
+                    // Set the generated melody as the current accompaniment
+                    setAccompaintment(audioBlob);
+                    console.log(audioBlob)
+                    
+                    // Now you can use audioUrl to play or display the processed audio file
+
+                    console.log('Response from server:', response);
+                })
+                .catch(error => {
+                    console.error('Error receiving audio file:', error);
+                });
+        }          
+    };
 
     return (
         <div>
             <div>
-                <h2 className={styles.textCenter}>Accompaintment Generation</h2>
+                <h3 className={styles.textCenter}>Accompaintment Generation</h3>
             </div>
 
-            <div className={styles.inputFieldContainer}>
-                <div>
-                    <input 
-                    className={styles.inputFile} 
-                    type="file" 
-                    accept=".mp3, .wav" 
-                    onChange={handleFileChange}
-                    ref={fileInputRef}/>
-                </div>
-            </div>
-            
-            <div className={styles.textCenter}>
-                {error && <p>{error}</p>}
-            </div>
+
+            <form onSubmit={handleFileChange}>
+                    <div className="mt-5">
+                        <div className="mr-auto ml-auto w-1/2 relative border-dotted h-20 rounded-lg border-2 border-pink-700 bg-pink-200 flex justify-center items-center">
+                            <div className="absolute">
+                                <div className="flex flex-col items-center"><span className="block text-gray-400 font-normal">Upload melody</span></div>
+                            </div> 
+                            <input type="file" className="h-full w-full opacity-0" name="" onChange={handleFileChange}></input>
+                        </div>
+                    </div>
+            </form>
 
             {file && (
             <>
@@ -157,6 +192,15 @@ const AccompaintmentPage = () => {
                 <div className={styles.melodyButtonContainer}>
                     <button className={styles.melodyButton} onClick={handleSend}>Generate Melody</button>
                 </div>
+
+                {accompaintment && (
+                        <>
+                            <div className={styles.generatedMelodyTitle}>
+                                <h3>Generated Accompaintment</h3>
+                            </div>
+                            <div ref={waveformRef2} onClick={handleWaveformClick} className={styles.waveformContainer} />
+                        </>
+                )}
             </>
             )}
         </div>

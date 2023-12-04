@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -10,17 +10,27 @@ def melodyGenerate(request):
     if request.method == 'POST':
         # Access the array from the form data
         instruments = request.POST.get('instruments')
-        print('Received array from frontend:', instruments)
+        print('Received instruments from frontend:', instruments)
 
         # Access the audio file from the form data
         audio_file = request.FILES.get('audioFile')
         if audio_file:
             # Do something with the audio file, e.g., save it to disk
-            with open('uploaded_audio.wav', 'wb') as destination:
+            output_audio_path = './inputs/melody.wav'
+            with open(output_audio_path, 'wb') as destination:
                 for chunk in audio_file.chunks():
                     destination.write(chunk)
 
             print('Audio file received and saved')
 
-        return JsonResponse({'message': 'Data received successfully'})
+            # Process the audio file if needed (replace this with your processing logic)
+
+            # Return the processed audio file as a response
+            with open(output_audio_path, 'rb') as audio_file:
+                response = HttpResponse(audio_file.read(), content_type='audio/wav')
+                response['Content-Disposition'] = 'attachment; filename="accompaintment.wav"'
+                return response
+
+        return JsonResponse({'error': 'Audio file not received'}, status=400)
+
     return JsonResponse({'error': 'Invalid request method'}, status=400)

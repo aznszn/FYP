@@ -1,6 +1,8 @@
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from myApp.scripts import accompaniment
+import os
 
 def helloWorld(request):
     return JsonResponse({'message': 'Hello, World!'})
@@ -16,17 +18,19 @@ def melodyGenerate(request):
         audio_file = request.FILES.get('audioFile')
         if audio_file:
             # Do something with the audio file, e.g., save it to disk
-            output_audio_path = './inputs/melody.wav'
+            filename = "melody.wav"
+            output_audio_path = 'myApp/inputs/' + filename
             with open(output_audio_path, 'wb') as destination:
                 for chunk in audio_file.chunks():
                     destination.write(chunk)
 
             print('Audio file received and saved')
-
+            
+            accompaniment.main(filename)
             # Process the audio file if needed (replace this with your processing logic)
 
             # Return the processed audio file as a response
-            with open(output_audio_path, 'rb') as audio_file:
+            with open('scripts/generated/melody_generated.wav', 'rb') as audio_file:
                 response = HttpResponse(audio_file.read(), content_type='audio/wav')
                 response['Content-Disposition'] = 'attachment; filename="accompaintment.wav"'
                 return response

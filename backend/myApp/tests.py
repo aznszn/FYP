@@ -1,3 +1,4 @@
 from django.test import TestCase
+from scripts import accompaniment
 
-# Create your tests here.
+accompaniment.main("../inputs/melody.wav", length=10)

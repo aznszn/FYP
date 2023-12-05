@@ -1,0 +1,4 @@
+/backend/myApp/scripts/midi_output/*
+/backend/myApp/scripts/generated/*
+/backend/myApp/scripts/vocalsSeparated/*
+/backend/myApp/scripts/vox_midi/*

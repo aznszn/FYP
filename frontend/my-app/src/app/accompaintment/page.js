@@ -164,7 +164,7 @@ const AccompaintmentPage = () => {
     return (
         <div>
             <div>
-                <h3 className={styles.textCenter}>Accompaintment Generation</h3>
+                <h1 className={styles.textCenter}>Accompaintment Generation</h1>
             </div>
 
 
